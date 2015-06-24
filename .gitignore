@@ -1,0 +1,9 @@
+*.opensdf
+*.sdf
+*.suo
+*.user
+*Debug
+*Release
+
+# Ignore build folder
+build/

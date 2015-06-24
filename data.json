@@ -1,0 +1,23 @@
+{
+	"camera": 
+		{ 
+			"u0": 346.966835812843040, 
+			"v0": 240.286986071815390, 
+			"width": 640, 
+			"height": 480, 
+			"f": 738.143358488352310 
+		},
+	"map":
+		{  
+			"minx": -4, 
+			"miny": -4, 
+			"maxx": 8, 
+			"maxy": 8
+		},
+	"dataset":
+		{ 
+			"index": 829,
+			"name": "C:/programming/datasets/images_500mm/image%d.jpg", 
+			"vicon": "C:/programming/datasets/images_500mm/ViconData.txt"
+		}
+}
