@@ -146,12 +146,12 @@ void DetectionTask::run(){
 			ellipse[3] = 4.8953*sqrt(value2);
 
 			if (ellipse[2] <= 0 || ellipse[3] <= 0){
-				std::cout << "Ellipse de eje cero o menor: " << ellipse[2] << ", " << ellipse[3] << std::endl;
+				write2Log("Ellipse de eje cero o menor: " + std::to_string(ellipse[2]) + ", " + std::to_string(ellipse[3]));
 				particleEstimationFile << 99999.9 << "\t" << 99999.9 << "\t";
 				continue;
 			}
 			else if (ellipse[2] >= 3.0 || ellipse[3] >= 3.0){
-				std::cout << "Sigma demasiado grande: " << ellipse[2] << ", " << ellipse[3] << std::endl;
+				write2Log("Sigma demasiado grande: " + std::to_string(ellipse[2]) + ", " + std::to_string(ellipse[3]));
 				particleEstimationFile << 99999.9 << "\t" << 99999.9 << "\t";
 				continue;
 			}
