@@ -26,6 +26,20 @@
 #include <sstream>
 #include <fstream>
 
+
+#ifdef _WIN32
+#include <Windows.h>
+inline void do_mkdir(std::string _filename) {
+	CreateDirectory(_filename.c_str(), NULL);
+}
+#elif __linux__
+#include <sys/stat.h>
+#include <sys/types.h>
+inline void do_mkdir(std::string _filename) {
+	mkdir(_filename.c_str(), 0700);
+}
+#endif
+
 using namespace cv;
 using namespace BOViL;
 using namespace std;
@@ -189,6 +203,9 @@ void DetectionTask::run(){
 void DetectionTask::init(){
 	mVisionSensor	= getSensor<OpencvSensor>();
 	mImuSensor		= getSensor<ImuSimulatorSensor>();
+
+	do_mkdir("dataAnalysis");
+	do_mkdir("subImages");
 
 	globalMovementFile.open("dataAnalysis/globalMovement");
 	assert(globalMovementFile.is_open());
