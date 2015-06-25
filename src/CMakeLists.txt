@@ -56,3 +56,6 @@ target_include_directories(car_detection PUBLIC ${PROJECT_SOURCE_DIR}/../../lib/
 target_link_libraries(car_detection LINK_PUBLIC BOViL)
 target_link_libraries(car_detection LINK_PUBLIC DroneApplications)
 target_link_libraries(car_detection LINK_PUBLIC ${OPENCV_LIBS})
+
+
+file(COPY ../data.json DESTINATION ${CMAKE_BINARY_DIR}/src)
