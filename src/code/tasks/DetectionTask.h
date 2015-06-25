@@ -11,9 +11,8 @@
 #define DETECTION_TASK_H_
 
 #include "Task.h"
-#include "sensors/OpencvVideoSensor.h"
-#include "sensors/OpencvImageFileSensor.h"
-#include "sensors/OpencvCameraSensor.h"
+#include <implementations/sensors/OpencvSensor.h>
+#include <implementations/sensors/ImuSensor.h>
 #include "CarParticleFilter.h"
 #include "visualization/Map.h"
 
@@ -41,7 +40,7 @@ private:
 
 private:
 	OpencvSensor		*mVisionSensor;
-	ImuSimulatorSensor			*mImuSensor;
+	ImuSensor			*mImuSensor;
 
 	BOViL::ColorClusterSpace	mCcs;
 	CarParticleFilter			mParticleFilter;

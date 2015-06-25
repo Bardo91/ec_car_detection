@@ -9,15 +9,15 @@
 // in order to build afterwards structures.
 
 #include "DroneApplication.h"
-#include "sensors/OpencvVideoSensor.h"
-#include "sensors/OpencvCameraSensor.h"
-#include "sensors/OpencvImageFileSensor.h"
-#include "sensors/ImuSimulatorSensor.h"
 #include "tasks/DetectionTask.h"
+
+#include <implementations/sensors/OpencvVideoSensor.h>
+#include <implementations/sensors/OpencvCameraSensor.h>
+#include <implementations/sensors/OpencvImageFileSensor.h>
+#include <implementations/sensors/ImuSimulatorSensor.h>
 
 #include <core/types/file/file.h>
 #include <core/types/file/json.h>
-
 #include <core/time/time.h>
 
 #include <iostream>
@@ -40,11 +40,6 @@ int main(int _argc, char** _argv){
 	mainApp.registerSensor(*((OpencvSensor*)&vSensor));
 	ImuSimulatorSensor imuSensor(data["dataset"]["vicon"].asText());
 	mainApp.registerSensor(imuSensor);
-
-
-	// Init Controller
-	//ArdroneController controllerTB;
-	//mainApp.setController(controllerTB);
 
 	// Task
 	DetectionTask process(data);

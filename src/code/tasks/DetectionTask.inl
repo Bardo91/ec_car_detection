@@ -202,7 +202,7 @@ void DetectionTask::run(){
 // Private methods
 void DetectionTask::init(){
 	mVisionSensor	= getSensor<OpencvSensor>();
-	mImuSensor		= getSensor<ImuSimulatorSensor>();
+	mImuSensor		= getSensor<ImuSensor>();
 
 	do_mkdir("dataAnalysis");
 	do_mkdir("subImages");
@@ -240,7 +240,7 @@ class clusters{
 };
 
 
-vector<pair<Point2f, Point2f> >	DetectionTask::featuresAndFlow(const cv::Mat &_prev, const cv::Mat &_current){
+vector<pair<Point2f, Point2f>>	DetectionTask::featuresAndFlow(const cv::Mat &_prev, const cv::Mat &_current){
 	Mat prev, current;
 	vector<Point2f> featuresPrevious;
 	vector<Point2f> featuresNextPos;
@@ -333,16 +333,6 @@ vector<pair<Point2f, Point2f> >	DetectionTask::featuresAndFlow(const cv::Mat &_p
 //---------------------------------------------------------------------------------------------------------------------
 vector<array<double, 2>> DetectionTask::transformParticles(vector<pair<Point2f, Point2f> > &_features){
 	ImuData imuData = mImuSensor->get();
-
-	// Add targets and own pos. Debug
-	vector<array<double, 2>> targets;
-	array<double, 2> targetWrapper = { imuData.mTargetPos[0], imuData.mTargetPos[1] };
-	targets.push_back(targetWrapper);
-	targetWrapper[0] = imuData.mTargetPos2[0];
-	targetWrapper[1] = imuData.mTargetPos2[1];
-	targets.push_back(targetWrapper);
-
-	mRepresentation.addPoints(targets, eColor::ePurple);
 
 	vector<array<double, 2>> quad;
 	array<double, 2> quadWrapper = { imuData.mPos[0], imuData.mPos[1] };
