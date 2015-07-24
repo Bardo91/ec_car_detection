@@ -37,7 +37,7 @@ using namespace std;
 using namespace cv;
 
 void mouseCallback(int event, int x, int y, int flags, void* userdata);
-double colorMedValue(const Mat &_frame, int _x, int _y, int _r);
+double colorMedValue(const Mat &_frame, int _x, int _y, int _r, int _channel);
 int numKeyArround(const KeyPoint &_keypoint, const std::vector<KeyPoint> &_keypoints, double _range);
 
 vector<KeyPoint> keypoints;	// To be used with mouse callback
@@ -58,7 +58,7 @@ int main(int _argc, char** _argv){
 
 	OpencvImageFileSensor vSensor("C:/programming/datasets/images_500mm/image%d.jpg",829);
 
-	Mat descriptors;
+	Mat descriptors, ori;
 
 	for (;;) {
 		// Clear data for next step
@@ -71,6 +71,7 @@ int main(int _argc, char** _argv){
 			break;
 
 		// To gray scale
+		frame.copyTo(ori);
 		cvtColor(frame, frame, CV_BGR2GRAY);
 		
 		// Compute features
@@ -93,10 +94,18 @@ int main(int _argc, char** _argv){
 		// Store Data
 		for (unsigned i = 0; i < keypoints.size(); i++) {
 			dataset << yClass[i] << "," <<
-					colorMedValue(frame, keypoints[i].pt.x, keypoints[i].pt.y, 4) << "," << 
-					colorMedValue(frame, keypoints[i].pt.x, keypoints[i].pt.y, 8) << "," <<
-					colorMedValue(frame, keypoints[i].pt.x, keypoints[i].pt.y, 16) << "," <<
-					colorMedValue(frame, keypoints[i].pt.x, keypoints[i].pt.y, 32) << "," << 
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 4, 0) << "," << 
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 8, 0) << "," <<
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 16, 0) << "," <<
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 32, 0) << "," << 
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 4, 1) << "," << 
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 8, 1) << "," <<
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 16, 1) << "," <<
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 32, 1) << "," <<
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 4, 2) << "," << 
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 8, 2) << "," <<
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 16, 2) << "," <<
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 32, 2) << "," <<
 					numKeyArround(keypoints[i], keypoints, 4) << "," <<
 					numKeyArround(keypoints[i], keypoints, 8) << "," << 
 					numKeyArround(keypoints[i], keypoints, 16) << "," <<
@@ -144,16 +153,16 @@ void mouseCallback(int _event, int _x, int _y, int _flags, void* _userdata) {
 	}
 }
 
-double colorMedValue(const Mat &_frame, int _x, int _y, int _r) {
+double colorMedValue(const Mat &_frame, int _x, int _y, int _r, int _channel) {
 	double medVal = 0;
 	int accum = 0;
 	for (int i = -_r; i < _r; i++) {
 		for (int j = -_r; j < _r; j++) {
 			if (sqrt(i ^ 2 + j ^ 2) < _r) {
-				if(_x + i < 0 ||_y + j < 0 || _x + i > _frame.cols || _y + j > frame.rows)
+				if(_x + i < 0 ||_y + j < 0 || _x + i > _frame.cols || _y + j > _frame.rows)
 					continue;
 
-				medVal += _frame.data[_x + i + (_y + j)*_frame.cols];
+				medVal += _frame.data[(_x + i) + (_y + j)*_frame.cols + _channel*_frame.cols*_frame.rows];
 				accum ++;
 			}
 		}
