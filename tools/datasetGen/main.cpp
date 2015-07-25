@@ -94,18 +94,18 @@ int main(int _argc, char** _argv){
 		// Store Data
 		for (unsigned i = 0; i < keypoints.size(); i++) {
 			dataset << yClass[i] << "," <<
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 8, 0) << "," << 
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 16, 0) << "," <<
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 32, 0) << "," <<
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 64, 0) << "," << 
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 8, 1) << "," << 
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 16, 1) << "," <<
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 32, 1) << "," <<
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 64, 1) << "," <<
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 8, 2) << "," << 
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 16, 2) << "," <<
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 32, 2) << "," <<
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 64, 2) << "," <<
+					colorMedValue(ori, int(keypoints[i].pt.x), int(keypoints[i].pt.y), 8, 0) << "," << 
+					colorMedValue(ori, int(keypoints[i].pt.x), int(keypoints[i].pt.y), 16, 0) << "," <<
+					colorMedValue(ori, int(keypoints[i].pt.x), int(keypoints[i].pt.y), 32, 0) << "," <<
+					colorMedValue(ori, int(keypoints[i].pt.x), int(keypoints[i].pt.y), 64, 0) << "," << 
+					colorMedValue(ori, int(keypoints[i].pt.x), int(keypoints[i].pt.y), 8, 1) << "," << 
+					colorMedValue(ori, int(keypoints[i].pt.x), int(keypoints[i].pt.y), 16, 1) << "," <<
+					colorMedValue(ori, int(keypoints[i].pt.x), int(keypoints[i].pt.y), 32, 1) << "," <<
+					colorMedValue(ori, int(keypoints[i].pt.x), int(keypoints[i].pt.y), 64, 1) << "," <<
+					colorMedValue(ori, int(keypoints[i].pt.x), int(keypoints[i].pt.y), 8, 2) << "," << 
+					colorMedValue(ori, int(keypoints[i].pt.x), int(keypoints[i].pt.y), 16, 2) << "," <<
+					colorMedValue(ori, int(keypoints[i].pt.x), int(keypoints[i].pt.y), 32, 2) << "," <<
+					colorMedValue(ori, int(keypoints[i].pt.x), int(keypoints[i].pt.y), 64, 2) << "," <<
 					numKeyArround(keypoints[i], keypoints, 8) << "," <<
 					numKeyArround(keypoints[i], keypoints, 16) << "," << 
 					numKeyArround(keypoints[i], keypoints, 32) << "," <<
@@ -138,7 +138,7 @@ void mouseCallback(int _event, int _x, int _y, int _flags, void* _userdata) {
 		int rtx = lastClick.x > _x ? lastClick.x : _x;
 		int rty = lastClick.y > _y ? lastClick.y : _y;
 
-		for (int i = 0; i < keypoints.size(); i++) {
+		for (unsigned i = 0; i < keypoints.size(); i++) {
 			KeyPoint keypoint = keypoints[i];
 			if (keypoint.pt.x > lbx && keypoint.pt.x < rtx) {
 				if (keypoint.pt.y > lby && keypoint.pt.y < rty) {
