@@ -53,13 +53,12 @@ int main(int _argc, char** _argv){
 
 	std::vector<KeyPoint> keypoints;
 	for (;;) {
+		Mat ori, display;
 		Mat frame = sensor.get();
-		cvtColor(frame, frame, CV_BGR2HSV);
+		cvtColor(frame, ori, CV_BGR2HSV);
 		if(frame.rows == 0)
 			break;
 
-		Mat ori, display;
-		frame.copyTo(ori);
 		frame.copyTo(display);
 		cvtColor(frame, frame, CV_BGR2GRAY);
 		FAST(frame, keypoints, 5);

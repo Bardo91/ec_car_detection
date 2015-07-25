@@ -45,13 +45,13 @@ int main(int _argc, char** _argv){
 
 	NeuronalNetwork<16, 1, 16, 1> nn;
 	std::cout << "Start training" << std::endl;
-	nn.train(trainSetX, trainSetY, 1, 1, 500);
+	nn.train(trainSetX, trainSetY, 1, 2, 1500);
 	std::cout << "End training" << std::endl;
 
 	double tp = 0, tn = 0, fp = 0, fn = 0;
 	for (int i = 0; i < cvSetX.rows(); i++) {
 		MatrixXd y = nn.evaluate(cvSetX.block(i,0, 1, cvSetX.cols()).transpose());
-		int yi = y(0,0)> 0.5?1:0;
+		int yi = y(0,0)> 0.2?1:0;
 		if (yi == int(ySet(i, 0))) {
 			if(yi == 1)
 				tp++;
@@ -129,9 +129,9 @@ void loadDataset(MatrixXd &_xSet, MatrixXd &_ySet, std::string _file) {
 	assert(dataFile.is_open());
 	std::string line;
 	unsigned i = 0;
-	_xSet = MatrixXd(20000, 16);
-	_ySet = MatrixXd::Zero(20000,1);
-	while(std::getline(dataFile, line) && i < 20000) {
+	_xSet = MatrixXd(10000, 16);
+	_ySet = MatrixXd::Zero(10000,1);
+	while(std::getline(dataFile, line) && i < 10000) {
 		// Get result
 		int index = line.find(",");
 		_ySet(i,0) = atoi(line.substr(0,index).c_str());
