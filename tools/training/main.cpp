@@ -32,6 +32,7 @@ int main(int _argc, char** _argv){
 	MatrixXd xSet;
 	MatrixXd ySet;
 	loadDataset(xSet, ySet, "dataset.txt");
+	std::cout << "Loaded Dataset" << std::endl;
 
 	MatrixXd trainSetX = xSet.block(0,0, xSet.rows()*60/100, xSet.cols());
 	MatrixXd trainSetY = ySet.block(0,0, ySet.rows()*60/100, ySet.cols());
@@ -43,7 +44,9 @@ int main(int _argc, char** _argv){
 	MatrixXd testSetY = ySet.block(ySet.rows()*80/100 + 1 ,0, ySet.rows()*20/100-1, ySet.cols());
 
 	NeuronalNetwork<16, 1, 16, 1> nn;
-	nn.train(trainSetX, trainSetY, 0.1, 0.5, 300);
+	std::cout << "Start training" << std::endl;
+	nn.train(trainSetX, trainSetY, 1, 1, 500);
+	std::cout << "End training" << std::endl;
 
 	double tp = 0, tn = 0, fp = 0, fn = 0;
 	for (int i = 0; i < cvSetX.rows(); i++) {
@@ -92,26 +95,31 @@ int main(int _argc, char** _argv){
 	results.close();
 
 	std::cout << "Finished" << std::endl;
+	waitKey();
 }
 
 void plotCost(const std::vector<double> &_cost) {
 	Mat display(480,640,CV_8UC3);
 
-	double minCost = *std::max_element(_cost.begin(), _cost.end());
-	double maxCost = *std::min_element(_cost.begin(), _cost.end());;
+	double minCost = *std::min_element(_cost.begin(), _cost.end());
+	double maxCost = *std::max_element(_cost.begin(), _cost.end());
 
-	int xMin = 20, xMax = 460, yMin = 20, yMax = 620;
+	const int xMin = 20, xMax = 620, yMin = 20, yMax = 460;
 	for (unsigned i = 0; i < _cost.size() - 1; i++) {
-		int x1 = (i+1)*(xMax - xMin)/_cost.size() + xMin;
-		int y1 = (_cost[i])*(yMax - yMin)/(maxCost - minCost) + yMin;
+		int x1 = (i)*(xMax - xMin)/_cost.size() + xMin;
+		int y1 = 480 -  int((_cost[i] - minCost)*(yMax - yMin)/(maxCost - minCost) + yMin);
 
 		int x2 = (i+1)*(xMax - xMin)/_cost.size() + xMin;
-		int y2 = (_cost[i+1])*(yMax - yMin)/(maxCost - minCost) + yMin;
+		int y2 = 480 - int((_cost[i+1] - minCost)*(yMax - yMin)/(maxCost - minCost) + yMin);
 
 
 		line(display, Point2i(x1,y1), Point2i(x2, y2), Scalar(0,0,255), 2);
 	}
 
+	line(display, Point2i(xMin,480 - yMin), Point2i(xMin, 480 - yMax), Scalar(255,255,255), 2);
+	line(display, Point2i(xMin,480 - yMin), Point2i(xMax, 480 - yMin), Scalar(255,255,255), 2);
+	putText(display, to_string(minCost), Point2i(0, 480 - yMin), FONT_HERSHEY_SCRIPT_SIMPLEX, 0.5, Scalar(255,255,255));
+	putText(display, to_string(maxCost), Point2i(0, 480 - yMax), FONT_HERSHEY_SCRIPT_SIMPLEX, 0.5, Scalar(255,255,255));
 	imshow("Cost Function", display);
 }
 
