@@ -42,7 +42,7 @@ int numKeyArround(const KeyPoint &_keypoint, const std::vector<KeyPoint> &_keypo
 
 vector<KeyPoint> keypoints;	// To be used with mouse callback
 vector<bool> yClass;
-Mat frame, display;
+Mat frame, display, displayOri;
 const string winName = "Display";
 
 int main(int _argc, char** _argv){
@@ -67,11 +67,12 @@ int main(int _argc, char** _argv){
 
 		// Get image
 		frame = vSensor.get();
+		frame.copyTo(display);
 		if(frame.rows == 0)
 			break;
 
 		// To gray scale
-		frame.copyTo(ori);
+		cvtColor(frame, ori, CV_BGR2HSV);
 		cvtColor(frame, frame, CV_BGR2GRAY);
 		
 		// Compute features
@@ -79,12 +80,11 @@ int main(int _argc, char** _argv){
 		yClass.resize(keypoints.size());
 
 		// First display
-		frame.copyTo(display);
 		for (unsigned i = 0 ; i < keypoints.size(); i++) {
 			circle(display, keypoints[i].pt, 5, Scalar(255,255,255));
 			yClass[i] = false;
 		}
-
+		display.copyTo(displayOri);
 		imshow(winName, display);
 
 		// Wait until esc
@@ -94,22 +94,22 @@ int main(int _argc, char** _argv){
 		// Store Data
 		for (unsigned i = 0; i < keypoints.size(); i++) {
 			dataset << yClass[i] << "," <<
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 4, 0) << "," << 
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 8, 0) << "," <<
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 8, 0) << "," << 
 					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 16, 0) << "," <<
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 32, 0) << "," << 
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 4, 1) << "," << 
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 8, 1) << "," <<
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 32, 0) << "," <<
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 64, 0) << "," << 
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 8, 1) << "," << 
 					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 16, 1) << "," <<
 					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 32, 1) << "," <<
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 4, 2) << "," << 
-					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 8, 2) << "," <<
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 64, 1) << "," <<
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 8, 2) << "," << 
 					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 16, 2) << "," <<
 					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 32, 2) << "," <<
-					numKeyArround(keypoints[i], keypoints, 4) << "," <<
-					numKeyArround(keypoints[i], keypoints, 8) << "," << 
-					numKeyArround(keypoints[i], keypoints, 16) << "," <<
-					numKeyArround(keypoints[i], keypoints, 32) << "\n";
+					colorMedValue(ori, keypoints[i].pt.x, keypoints[i].pt.y, 64, 2) << "," <<
+					numKeyArround(keypoints[i], keypoints, 8) << "," <<
+					numKeyArround(keypoints[i], keypoints, 16) << "," << 
+					numKeyArround(keypoints[i], keypoints, 32) << "," <<
+					numKeyArround(keypoints[i], keypoints, 64) << "\n";
 		}
 		dataset.flush();
 	}
@@ -125,6 +125,11 @@ void mouseCallback(int _event, int _x, int _y, int _flags, void* _userdata) {
 	if (_event == EVENT_LBUTTONDOWN && !pressed) {
 		pressed = !pressed;
 		lastClick = Point2i(_x, _y);
+	}
+	else if(_event == EVENT_MOUSEMOVE && pressed){
+		displayOri.copyTo(display);
+		rectangle(display, lastClick, Point2i(_x, _y), Scalar(0,255,0));
+		imshow(winName, display);
 	}
 	else if (_event == EVENT_LBUTTONUP && pressed) {
 		pressed = !pressed;
@@ -142,13 +147,13 @@ void mouseCallback(int _event, int _x, int _y, int _flags, void* _userdata) {
 			}
 
 			if (yClass[i]) {
-				circle(display, keypoint.pt, 5, Scalar(0,0,255));
+				circle(displayOri, keypoint.pt, 5, Scalar(0,0,255));
 			}
 			else {
-				circle(display, keypoint.pt, 5, Scalar(255,255,255));
+				circle(displayOri, keypoint.pt, 5, Scalar(255,255,255));
 			}
 		}
-
+		displayOri.copyTo(display);
 		imshow(winName, display);
 	}
 }
