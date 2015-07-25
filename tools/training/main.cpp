@@ -21,10 +21,7 @@ using namespace BOViL::algorithms;
 using namespace cv;
 
 void loadDataset(MatrixXd &_xSet, MatrixXd &_ySet, std::string _file) ;
-
-double colorMedValue(const Mat &_frame, int _x, int _y, int _r, int _channel);
-int numKeyArround(const KeyPoint &_keypoint, const std::vector<KeyPoint> &_keypoints, double _range);
-
+void plotCost(const std::vector<double> &_cost);
 
 int main(int _argc, char** _argv){
 	_argc; _argv;
@@ -46,7 +43,7 @@ int main(int _argc, char** _argv){
 	MatrixXd testSetY = ySet.block(ySet.rows()*80/100 + 1 ,0, ySet.rows()*20/100-1, ySet.cols());
 
 	NeuronalNetwork<16, 1, 16, 1> nn;
-	nn.train(trainSetX, trainSetY, 0.15, 0.5, 300);
+	nn.train(trainSetX, trainSetY, 0.1, 0.5, 300);
 
 	double tp = 0, tn = 0, fp = 0, fn = 0;
 	for (int i = 0; i < cvSetX.rows(); i++) {
@@ -71,6 +68,8 @@ int main(int _argc, char** _argv){
 	double recall = tp/(tp + fn);
 	double Fscore = 2*precision*recall/(precision + recall);
 
+	plotCost(nn.costHistory());
+
 	auto params = nn.parameters();
 	for (unsigned i = 0; i < params.size(); i++) {
 		ofstream paramFile("params" + to_string(i) + ".txt");
@@ -93,6 +92,27 @@ int main(int _argc, char** _argv){
 	results.close();
 
 	std::cout << "Finished" << std::endl;
+}
+
+void plotCost(const std::vector<double> &_cost) {
+	Mat display(480,640,CV_8UC3);
+
+	double minCost = *std::max_element(_cost.begin(), _cost.end());
+	double maxCost = *std::min_element(_cost.begin(), _cost.end());;
+
+	int xMin = 20, xMax = 460, yMin = 20, yMax = 620;
+	for (unsigned i = 0; i < _cost.size() - 1; i++) {
+		int x1 = (i+1)*(xMax - xMin)/_cost.size() + xMin;
+		int y1 = (_cost[i])*(yMax - yMin)/(maxCost - minCost) + yMin;
+
+		int x2 = (i+1)*(xMax - xMin)/_cost.size() + xMin;
+		int y2 = (_cost[i+1])*(yMax - yMin)/(maxCost - minCost) + yMin;
+
+
+		line(display, Point2i(x1,y1), Point2i(x2, y2), Scalar(0,0,255), 2);
+	}
+
+	imshow("Cost Function", display);
 }
 
 
@@ -121,34 +141,4 @@ void loadDataset(MatrixXd &_xSet, MatrixXd &_ySet, std::string _file) {
 		i++;
 	}
 	dataFile.close();
-}
-
-
-double colorMedValue(const Mat &_frame, int _x, int _y, int _r, int _channel) {
-	double medVal = 0;
-	int accum = 0;
-	for (int i = -_r; i < _r; i++) {
-		for (int j = -_r; j < _r; j++) {
-			if (sqrt(i ^ 2 + j ^ 2) < _r) {
-				if(_x + i < 0 ||_y + j < 0 || _x + i > _frame.cols || _y + j > _frame.rows)
-					continue;
-
-				medVal += _frame.data[(_x + i) + (_y + j)*_frame.cols + _channel*_frame.cols*_frame.rows];
-				accum ++;
-			}
-		}
-	}
-
-	return medVal/accum;
-}
-
-int numKeyArround(const KeyPoint &_keypoint, const std::vector<KeyPoint> &_keypoints, double _range) {
-	int accum = -1;
-	for (KeyPoint keypoint : _keypoints) {
-		if (sqrt(pow(keypoint.pt.x - _keypoint.pt.x, 2) + pow(keypoint.pt.y - _keypoint.pt.y, 2))< _range) {
-			accum ++;
-		}
-	}
-
-	return accum;
 }
