@@ -260,7 +260,7 @@ vector<pair<Point2f, Point2f>>	DetectionTask::featuresAndFlow(const cv::Mat &_pr
 	// Track Features.
 	std::vector<cv::KeyPoint> keypoints;
 	FAST(prev, keypoints, 9);
-	cv::KeyPointsFilter::retainBest(keypoints, 40);
+	cv::KeyPointsFilter::retainBest(keypoints, 400);
 	for (cv::KeyPoint keypoint : keypoints){
 		featuresPrevious.push_back(Point2f(keypoint.pt.x, keypoint.pt.y));
 	}
@@ -299,6 +299,7 @@ vector<pair<Point2f, Point2f>>	DetectionTask::featuresAndFlow(const cv::Mat &_pr
 	}
 	
 	///// EXTRACT IMAGE USING CLUSTERS
+	/*
 	const unsigned cMinFeatures = 6;
 	features.clear();
 	int clusterCounter = 0;
@@ -325,7 +326,7 @@ vector<pair<Point2f, Point2f>>	DetectionTask::featuresAndFlow(const cv::Mat &_pr
 		++clusterCounter;
 	}
 	++frameCounter;
-
+	*/
 	return  features;
 }
 

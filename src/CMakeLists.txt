@@ -41,18 +41,18 @@ set(CMAKE_MODULE_PATH $ENV{CMAKE_MODULE_PATH})
 
 # Loading 3rd party libraries.
 find_package(OpenCV REQUIRED)
-include_directories(${OPENCV_INCLUDE_DIR})
-include_directories(${OPENCV_LIB_DIR})
+set_target_properties(${OpenCV_LIBS} PROPERTIES MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE)
 
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 # Add Executable
 add_executable(car_detection ${CARDETECTION_SOURCE_FILES})
-
+target_include_directories(car_detection PUBLIC ${OpenCV_INCLUDE_DIRS})
 target_include_directories(car_detection PUBLIC ${PROJECT_SOURCE_DIR}/code)
 target_include_directories(car_detection PUBLIC ${PROJECT_SOURCE_DIR}/../../lib/bovil/src/code)
 target_include_directories(car_detection PUBLIC ${PROJECT_SOURCE_DIR}/../../lib/DroneApplications/src/code)
+target_link_libraries(car_detection LINK_PUBLIC ${OpenCV_LIBS})
 target_link_libraries(car_detection LINK_PUBLIC BOViL)
 target_link_libraries(car_detection LINK_PUBLIC DroneApplications)
 target_link_libraries(car_detection LINK_PUBLIC ${OPENCV_LIBS})

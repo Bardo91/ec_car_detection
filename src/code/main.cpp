@@ -33,11 +33,11 @@ int main(int _argc, char** _argv){
 	Json data = loadData("data.json");
 	
 	// Init Vision sensor
-	//OpencvVideoSensor	vSensor;
+	OpencvVideoSensor	vSensor(data["dataset"]["name"].asText());
 	//OpencvCameraSensor	vSensor;
-	OpencvImageFileSensor vSensor(data["dataset"]["name"].asText(), data["dataset"]["index"].asInt());
-	
-	mainApp.registerSensor(*((OpencvSensor*)&vSensor));
+	//OpencvImageFileSensor vSensor(data["dataset"]["name"].asText(), data["dataset"]["index"].asInt());
+	mainApp.registerSensor(vSensor);
+
 	ImuSimulatorSensor imuSensor(data["dataset"]["vicon"].asText());
 	mainApp.registerSensor(imuSensor);
 
